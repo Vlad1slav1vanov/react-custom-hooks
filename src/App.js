@@ -1,23 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import Hover from './components/Hover';
+import useInput from './hooks/useInput';
+import List from './components/List';
+import { useState } from 'react';
+import useDebounce from './hooks/useDebounce';
+import axios from 'axios';
+import useRequest from './hooks/useRequest';
 
 function App() {
+  const [todos, loading, error] = useRequest(fetchTodos)
+
+  function fetchTodos(query) {
+    return axios.get('https://jsonplaceholder.typicode.com/todos?query='+query)
+};
+
+if (loading) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <h1>Loading</h1>
+  )
+}
+
+if (error) {
+  <h1>Error</h1>
+}
+
+  return (
+    <div>
+      {todos && todos.map(todo => 
+        <div 
+        key={todo.id} 
+        style={{padding: 30, border: 'solid 2px black'}}>
+        {todo.id}.  {todo.title}
+      </div>
+      )}
     </div>
   );
 }
